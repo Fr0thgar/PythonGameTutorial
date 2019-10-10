@@ -35,6 +35,8 @@ while not is_game_over:
         # if we have quit type event (exit out) then exit out of the game loop
         if event.type == pygame.QUIT:
             is_game_over = True
+            
+        print(event)
 
     #update all game graphics
     pygame.display.update()
