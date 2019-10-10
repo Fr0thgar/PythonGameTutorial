@@ -26,6 +26,7 @@ game_screen.fill(WHITE_COLOR)
 pygame.display.set_caption(SCREEN_TITLE)
 
 player_image = pygame.image.load('player.png')
+player_image = pygame.transform.scale(player_image, (50, 50))
 
 # main game loop , used to update all gameplay such as movement, checks, and graphiccs
 # Runs until is_game_over = True
@@ -41,9 +42,11 @@ while not is_game_over:
         print(event)
 
     # draw a rectangle on top of the game screen canvas(x, y, width, height)
-#    pygame.draw.rect(game_screen, BLACK_COLOR, [350, 350, 100, 100])
+    #    pygame.draw.rect(game_screen, BLACK_COLOR, [350, 350, 100, 100])
     # draw a circle on top of the game screen canvas( x, y, radius)
-#    pygame.draw.circle(game_screen, BLACK_COLOR, (400, 300), 50)
+    #    pygame.draw.circle(game_screen, BLACK_COLOR, (400, 300), 50)
+
+    game_screen.blit(player_image, (375, 375))
 
     #update all game graphics
     pygame.display.update()
