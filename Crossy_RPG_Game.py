@@ -34,6 +34,9 @@ class Game:
 
     def run_game_loop(self):
         is_game_over = False
+        direction = 0
+        
+        player_character = PlayerCharacter('player.png', 375, 700, 50, 50)
 
         # main game loop , used to update all gameplay such as movement, checks, and graphiccs
         # Runs until is_game_over = True
@@ -45,6 +48,19 @@ class Game:
                 # if we have quit type event (exit out) then exit out of the game loop
                 if event.type == pygame.QUIT:
                     is_game_over = True
+                    # Detects when key is pressed down
+                elif event.type == pygame.KEYDOWN:
+                    # move up if up key pressed
+                    if event.key == pygame.K_UP:
+                        direction = 1
+                    # move down if down key pressed
+                    elif event.key == pygame.K_DOWN:
+                        direction = -1
+                # detect when key is released
+                elif event.type == pygame.KEYUP:
+                    # stop movement when key no longer pressed
+                    if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                        direction = 0
 
                 print(event)
 
@@ -64,9 +80,29 @@ class GameObject:
 
         self.x_pos = x
         self.y_pos = y
+        self.width = width
+        self.height = height
 
     def draw(self, background):
         background.blit(self.image, (self.x_pos, self.y_pos))
+
+# class to represent the character controlled by the player
+
+
+class PlayerCharacter(GameObject):
+
+    # how many tiles the character moves per second
+    SPEED = 10
+
+    def __init__(self, image_path, x, y, width, height):
+        super().__init__(image_path, x, y, width, height)
+
+    # move function will move character up if direction > 0 and down if < 0
+    def move(self, direction):
+        if direction > 0:
+            self.y_pos -= SPEED
+        elif direction < 0:
+            self.y_pos += SPEED
 
 
 pygame.init()
