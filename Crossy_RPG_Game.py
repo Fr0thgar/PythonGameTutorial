@@ -26,16 +26,17 @@ class Game:
         self.title = title
         self.width = width
         self.height = height
+        
         # create the window of specified size in white to display the game
-        game_screen = pygame.display.set_mode((width, height))
+        self.game_screen = pygame.display.set_mode((width, height))
         # set the game window color to white
-        game_screen.fill(WHITE_COLOR)
+        self.game_screen.fill(WHITE_COLOR)
         pygame.display.set_caption(title)
 
     def run_game_loop(self):
         is_game_over = False
         direction = 0
-        
+
         player_character = PlayerCharacter('player.png', 375, 700, 50, 50)
 
         # main game loop , used to update all gameplay such as movement, checks, and graphiccs
@@ -61,8 +62,14 @@ class Game:
                     # stop movement when key no longer pressed
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                         direction = 0
-
                 print(event)
+                
+            # redraw the screen to be a blank white window
+            self.game_screen.fill(WHITE_COLOR)
+            # update the player position
+            player_character.move(direction)
+            # draw the player at the new position
+            player_character.draw(self.game_screen)
 
             # update all game graphics
             pygame.display.update()
@@ -100,9 +107,9 @@ class PlayerCharacter(GameObject):
     # move function will move character up if direction > 0 and down if < 0
     def move(self, direction):
         if direction > 0:
-            self.y_pos -= SPEED
+            self.y_pos -= self.SPEED
         elif direction < 0:
-            self.y_pos += SPEED
+            self.y_pos += self.SPEED
 
 
 pygame.init()
