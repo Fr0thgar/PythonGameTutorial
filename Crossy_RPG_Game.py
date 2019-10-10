@@ -1,6 +1,6 @@
-# Pygame development 1 - 4
-# start the basic game set up
-# set up the display
+# Pygame development 5
+# Implement game classes
+# implement generic game objevct class
 
 # gain access to the pygame library
 import pygame
@@ -54,6 +54,18 @@ class Game:
             # tick the clock to update everything within the game
             clock.tick(self.TICK_RATE)
         
+
+class GameObject:
+    
+    def __init__(self, image_path x, y, width, height):
+        #load the player image from the file directory
+        object_image = pygame.image.load(image_path)
+        #scale the image up
+        player_image = pygame.transform.scale(player_image, (50, 50))
+        
+        self.x_pos = x
+        self.y_pos = y
+
 
 pygame.init()
 
