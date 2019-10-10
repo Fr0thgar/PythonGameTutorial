@@ -57,14 +57,17 @@ class Game:
 
 class GameObject:
     
-    def __init__(self, image_path x, y, width, height):
+    def __init__(self, image_path, x, y, width, height):
         #load the player image from the file directory
         object_image = pygame.image.load(image_path)
         #scale the image up
-        player_image = pygame.transform.scale(player_image, (50, 50))
+        self.image = pygame.transform.scale(object_image, (width, height))
         
         self.x_pos = x
         self.y_pos = y
+        
+    def draw(self, background):
+        background.blit(self.image, (self.x_pos, self.y_pos))
 
 
 pygame.init()
