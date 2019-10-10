@@ -39,6 +39,7 @@ while not is_game_over:
         print(event)
 
     pygame.draw.rect(game_screen, BLACK_COLOR, [350, 350, 100, 100])
+    pygame.draw.cicle(game_screen, BLACK_COLOR, (400, 300), 50)
 
     #update all game graphics
     pygame.display.update()
