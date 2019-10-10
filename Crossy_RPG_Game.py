@@ -1,4 +1,4 @@
-# Pygame development 1
+# Pygame development 1 - 3
 # start the basic game set up
 # set up the display
 
@@ -37,6 +37,8 @@ while not is_game_over:
             is_game_over = True
             
         print(event)
+
+    pygame.draw.rect(game_screen, BLACK_COLOR, [350, 350, 100, 100])
 
     #update all game graphics
     pygame.display.update()
