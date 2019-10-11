@@ -1,4 +1,4 @@
-# Pygame development 5
+# Pygame development 7
 # Implement game classes
 # implement generic game objevct class
 
@@ -26,7 +26,7 @@ class Game:
         self.title = title
         self.width = width
         self.height = height
-        
+
         # create the window of specified size in white to display the game
         self.game_screen = pygame.display.set_mode((width, height))
         # set the game window color to white
@@ -38,7 +38,7 @@ class Game:
         direction = 0
 
         player_character = PlayerCharacter('player.png', 375, 700, 50, 50)
-
+        enemy_0 = NonPlayerCharacter('enemy.png', 20, 400, 50, 50)
         # main game loop , used to update all gameplay such as movement, checks, and graphiccs
         # Runs until is_game_over = True
         while not is_game_over:
@@ -63,13 +63,16 @@ class Game:
                     if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                         direction = 0
                 print(event)
-                
+
             # redraw the screen to be a blank white window
             self.game_screen.fill(WHITE_COLOR)
             # update the player position
-            player_character.move(direction)
+            player_character.move(direction, max_height=-20)
             # draw the player at the new position
             player_character.draw(self.game_screen)
+
+            enemy_0.move(self.width)
+            enemy_0.draw(self.game_screen)
 
             # update all game graphics
             pygame.display.update()
@@ -105,11 +108,31 @@ class PlayerCharacter(GameObject):
         super().__init__(image_path, x, y, width, height)
 
     # move function will move character up if direction > 0 and down if < 0
-    def move(self, direction):
+    def move(self, direction, max_height):
         if direction > 0:
             self.y_pos -= self.SPEED
         elif direction < 0:
             self.y_pos += self.SPEED
+
+        if self.y_pos >= max_height - 40:
+            self.y_pos = max_height - 40
+        
+
+class NonPlayerCharacter(GameObject):
+
+    # how many tiles the character moves per second
+    SPEED = 10
+
+    def __init__(self, image_path, x, y, width, height):
+        super().__init__(image_path, x, y, width, height)
+
+    # move function will move character up if direction > 0 and down if < 0
+    def move(self, max_width):
+        if self.x_pos <= 20:
+            self.SPEED = abs(self.SPEED)
+        elif self.x_pos >= max_width - 20:
+            self.SPEED = -abs(self.SPEED)
+        self.x_pos += self.SPEED
 
 
 pygame.init()
