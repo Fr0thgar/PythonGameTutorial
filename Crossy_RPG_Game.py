@@ -67,7 +67,7 @@ class Game:
             # redraw the screen to be a blank white window
             self.game_screen.fill(WHITE_COLOR)
             # update the player position
-            player_character.move(direction, max_height=-20)
+            player_character.move(direction, self.height)
             # draw the player at the new position
             player_character.draw(self.game_screen)
 
@@ -116,7 +116,8 @@ class PlayerCharacter(GameObject):
 
         if self.y_pos >= max_height - 40:
             self.y_pos = max_height - 40
-        
+        elif self.y_pos <= max_height - 770:
+            self.y_pos = max_height - 770
 
 class NonPlayerCharacter(GameObject):
 
@@ -130,7 +131,7 @@ class NonPlayerCharacter(GameObject):
     def move(self, max_width):
         if self.x_pos <= 20:
             self.SPEED = abs(self.SPEED)
-        elif self.x_pos >= max_width - 20:
+        elif self.x_pos >= max_width - 40:
             self.SPEED = -abs(self.SPEED)
         self.x_pos += self.SPEED
 
