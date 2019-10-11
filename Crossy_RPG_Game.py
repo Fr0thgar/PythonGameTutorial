@@ -1,7 +1,3 @@
-# Pygame development 7
-# Implement game classes
-# implement generic game objevct class
-
 # gain access to the pygame library
 import pygame
 
@@ -14,6 +10,8 @@ WHITE_COLOR = (255, 255, 255)
 BLACK_COLOR = (0, 0, 0)
 # clock used to update game events and frames
 clock = pygame.time.Clock()
+pygame.font.init()
+font = pygame.font.SysFont('comicsans', 70)
 
 
 class Game:
@@ -22,7 +20,7 @@ class Game:
     TICK_RATE = 60
 
     # initializer for the game class to set up the width, height, and title
-    def __init__(self, title, width, height):
+    def __init__(self, image_path, title, width, height):
         self.title = title
         self.width = width
         self.height = height
@@ -33,12 +31,30 @@ class Game:
         self.game_screen.fill(WHITE_COLOR)
         pygame.display.set_caption(title)
 
-    def run_game_loop(self):
+        # load and set the background image for the scene
+        background_image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(background_image, (width, height))
+
+    def run_game_loop(self, level_speed):
         is_game_over = False
+        did_win = False
         direction = 0
 
         player_character = PlayerCharacter('player.png', 375, 700, 50, 50)
-        enemy_0 = NonPlayerCharacter('enemy.png', 20, 400, 50, 50)
+        enemy_0 = NonPlayerCharacter('enemy.png', 20, 600, 50, 50)
+        # speed increased as we advance in difficulty
+        enemy_0.SPEED *= level_speed
+
+        # create another enemy
+        enemy_1 = NonPlayerCharacter('enemy.png', self.width - 40, 400, 50, 50)
+        enemy_1.SPEED *= level_speed
+
+        # create another enemy
+        enemy_2 = NonPlayerCharacter('enemy.png', 20, 200, 50, 50)
+        enemy_2.SPEED *= level_speed
+
+        treasure = GameObject('treasure.png', 375, 50, 50, 50)
+
         # main game loop , used to update all gameplay such as movement, checks, and graphiccs
         # Runs until is_game_over = True
         while not is_game_over:
@@ -66,18 +82,55 @@ class Game:
 
             # redraw the screen to be a blank white window
             self.game_screen.fill(WHITE_COLOR)
+            self.game_screen.blit(self.image, (0, 0))
+
+            # draw the treasure
+            treasure.draw(self.game_screen)
+
             # update the player position
             player_character.move(direction, self.height)
             # draw the player at the new position
             player_character.draw(self.game_screen)
 
+            # move and draw the enemy character
             enemy_0.move(self.width)
             enemy_0.draw(self.game_screen)
+
+            if level_speed > 2:
+                enemy_1.move(self.width)
+                enemy_1.draw(self.game_screen)
+            if level_speed > 4:
+                enemy_2.move(self.width)
+                enemy_2.draw(self.game_screen)
+
+            # end game if collision between enemy and treasure
+            # close game if you lose
+            # restart game loop if we win
+            if player_character.detect_collision(enemy_0):
+                is_game_over = True
+                did_win = False
+                text = font.render('You lose! :(', True, BLACK_COLOR)
+                self.game_screen.blit(text, (275, 350))
+                pygame.display.update()
+                clock.tick(2)
+                break
+            elif player_character.detect_collision(treasure):
+                is_game_over = True
+                did_win = True
+                text = font.render('You Win! :)', True, BLACK_COLOR)
+                self.game_screen.blit(text, (275, 350))
+                pygame.display.update()
+                clock.tick(2)
+                break
 
             # update all game graphics
             pygame.display.update()
             # tick the clock to update everything within the game
             clock.tick(self.TICK_RATE)
+        if did_win:
+            self.run_game_loop(level_speed + 0.5)
+        else:
+            return
 
 
 class GameObject:
@@ -113,16 +166,32 @@ class PlayerCharacter(GameObject):
             self.y_pos -= self.SPEED
         elif direction < 0:
             self.y_pos += self.SPEED
-
+        # make sure the character never goes past the bottom and top of the  screen
         if self.y_pos >= max_height - 40:
             self.y_pos = max_height - 40
         elif self.y_pos <= max_height - 770:
             self.y_pos = max_height - 770
 
+    # return False (no collision) if y position and x positions do not overlap
+    # return true x and y positions overlap
+    def detect_collision(self, other_body):
+        if self.y_pos > other_body.y_pos + other_body.height:
+            return False
+        elif self.y_pos + self.height < other_body.y_pos:
+            return False
+
+        if self.x_pos > other_body.x_pos + other_body.width:
+            return False
+        elif self.x_pos + self.width < other_body.x_pos:
+            return False
+
+        return True
+
+
 class NonPlayerCharacter(GameObject):
 
     # how many tiles the character moves per second
-    SPEED = 10
+    SPEED = 2
 
     def __init__(self, image_path, x, y, width, height):
         super().__init__(image_path, x, y, width, height)
@@ -138,8 +207,8 @@ class NonPlayerCharacter(GameObject):
 
 pygame.init()
 
-new_game = Game(SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
-new_game.run_game_loop()
+new_game = Game('background.png', SCREEN_TITLE, SCREEN_WIDTH, SCREEN_HEIGHT)
+new_game.run_game_loop(1)
 
 
 # quit pygame and the program
